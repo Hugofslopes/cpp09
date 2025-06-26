@@ -6,7 +6,7 @@
 #    By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/22 14:55:18 by hfilipe-          #+#    #+#              #
-#    Updated: 2025/06/26 15:16:59 by hfilipe-         ###   ########.fr        #
+#    Updated: 2025/06/26 18:38:35 by hfilipe-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CXX = c++
 INCLUDES = -I includes
 SRC_DIR = src
 OBJ_DIR = obj
-SRC =  main.cpp
+SRC =  main.cpp BitcoinExchange.cpp
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC))
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 NAME = btc
