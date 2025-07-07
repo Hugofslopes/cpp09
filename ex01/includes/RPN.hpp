@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:58:24 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/06/26 15:29:42 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/07 22:43:57 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,25 @@
 # define RPN_CPP
 
 # include <iostream>
+# include <sstream>
+# include <fstream>
+# include <stack>
+# include <cstdlib>
+# include <limits>
 
+class RPN{
+	public:
+		RPN();
+		~RPN();
+		void applyRPN(char*);
+		void print();
+	
+	private:
+		RPN(const RPN &);
+		RPN& operator=(const RPN &);
+		void parseInput(std::string);
+		void calculate(char op);
+		std::stack<std::string> rpn;
+} ;
 
 # endif
