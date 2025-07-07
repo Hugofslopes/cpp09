@@ -6,168 +6,136 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/06/26 21:48:48 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/07 16:44:21 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
-BitcoinExchange::BitcoinExchange(){	
-}
+BitcoinExchange::~BitcoinExchange(){}
+
+BitcoinExchange::BitcoinExchange(){}
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &other){
-	dateList = other.dateList;
-	valueList = other.valueList;
+    btc = other.btc;
 }
 
 BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange &other){
-	if(this != &other)
-	{
-		dateList = other.dateList;
-		valueList = other.valueList;
-	}
-	return (*this);
-}
-
-BitcoinExchange::~BitcoinExchange(){
-	if (input) {
-		if (input->is_open())
-			input->close();
-		delete input;
-		input = NULL;
-	}
-}
-
-void BitcoinExchange::BitconExchange(char** av)
-{
-	checkOpenFile(av);
-	saveDataOnList();
-	addToList();
-	
-}
-
-void BitcoinExchange::checkOpenFile(char** av)
-{	
-	input = new std::ifstream(av[1], std::ios::in | std::ios::binary);
-	if (!input->is_open()) {
-		std::cerr << "Error opening input file: " << av[1] << std::endl;
-		delete input;
-		input = NULL;
-		exit(1);
-	}
-}
-
-void BitcoinExchange::saveDataOnList(void){
-    int			fieldIndex;
-	int 		pairIndex;
-	std::string	line;
-
-	while (std::getline(*input, line)){
-		std::stringstream ss(line);
-		std::string item;
-		fieldIndex = 0;
-		while (std::getline(ss, item, '|')){
-			pairIndex = fieldIndex / 2;
-
-			if (fieldIndex % 2 == 0){
-				if (pairIndex < 32)
-					dateList.push_back(item);
-			}
-			else{
-				if (pairIndex < 32)
-					valueList.push_back(item);
-			}
-			fieldIndex++;
-		}
-	}
-	input->close();
-}
-
-void BitcoinExchange::saveDataBOnList(void){
-    int			fieldIndex;
-	int 		pairIndex;
-	std::string	line;
-
-	input = new std::ifstream("data,csv", std::ios::in | std::ios::binary);
-	if (!input->is_open()) {
-		std::cerr << "Error opening input file: " << "data,csv" << std::endl;
-		delete input;
-		input = NULL;
-		exit(1);
-	}
-
-	while (std::getline(*input, line)){
-		std::stringstream ss(line);
-		std::string item;
-		fieldIndex = 0;
-		while (std::getline(ss, item, ',')){
-			pairIndex = fieldIndex / 2;
-
-			if (fieldIndex % 2 == 0){
-				if (pairIndex < 32)
-					dataBList.push_back(item);
-			}
-			else{
-				if (pairIndex < 32)
-					rateList.push_back(item);
-			}
-			fieldIndex++;
-		}
-	}
-	input->close();
-}
-
-void BitcoinExchange::addToList(void){
-	std::list<std::string>::iterator it = valueList.begin();
-	std::list<std::string>::iterator ite = valueList.end();  
-
-	for (; it != ite ; it++)
-		values.push_back(stringToFloat(*it));
-
-	std::list<float>::iterator its = values.begin();
-	std::list<float>::iterator ites = values.end();
-	for (; its != ites ; its++)
-		std::cout << *its << std::endl;    
-}
-
-float BitcoinExchange::stringToFloat(const std::string& s) {
-    const char*	cstr = s.c_str();
-    char* 		endptr = 0;
-    double 		val = std::strtod(cstr, &endptr);
-
-    if (endptr == cstr) {
-        std::cerr << "Invalid float: " << s << std::endl;
-        return (0.0f);
-	}
-        return (static_cast<float>(val));
-}
-
-bool isValidDate(const std::string& dateStr) {
-    if (dateStr.length() != 10 || dateStr[4] != '-' || dateStr[7] != '-')
-        return (false);
-
-    int year, month, day;
-    std::istringstream iss(dateStr);
-    char dash1, dash2;
-
-    if (!(iss >> year >> dash1 >> month >> dash2 >> day))
-        return (false);
-
-    if (month < 1 || month > 12 || day < 1 || day > 31)
-        return (false);
-
-    static const int daysInMonth[12] = {
-        31, 28, 31, 30, 31, 30,
-        31, 31, 30, 31, 30, 31
-    };
-
-    if (day > daysInMonth[month - 1])
-        return (false);
-
-    if (month == 2 && day == 29) {
-        bool isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
-        return (isLeap);
+    if(this != &other)
+    {
+        btc = other.btc;
     }
-	
-	return (true);
+    return *this;
+}
+
+int BitcoinExchange::dateToInt(int year, int month, int day)const{
+    return year * 10000 + month * 100 + day;
+}
+
+void BitcoinExchange::intToDate(int dateInt, int& year, int& month, int& day)const{
+    year = dateInt / 10000;
+    month = (dateInt / 100) % 100;
+    day = dateInt % 100;
+}
+
+std::string BitcoinExchange::saveDate(std::string date)const{
+    std::stringstream   ss(date);
+    std::string         str;
+    int                 fieldIndex = 0;
+    int                 year = 0, month = 0, day = 0, nbdate = 0;
+
+    while (std::getline(ss, str, '-')) {
+        if (fieldIndex == 0)
+            year = std::atoi(str.c_str());
+        else if (fieldIndex == 1)
+            month = std::atoi(str.c_str());
+        else if (fieldIndex == 2)
+            day = std::atoi(str.c_str());
+        else
+            return ("Invalid date format");
+        fieldIndex++;
+    }
+    if (fieldIndex != 3) 
+        return("Invalid date format");
+    nbdate = dateToInt(year, month, day);
+    std::ostringstream oss;
+    oss << date;
+    return oss.str();
+}
+
+float BitcoinExchange::saveNumber(std::string number)const{
+    float nb;
+    char* end;
+    nb = static_cast<float>(std::strtod(number.c_str(), &end));
+    return (nb);
+}
+
+void BitcoinExchange::printMaps(const std::string str) const{
+    
+    if (str == "btc")
+        for (std::multimap<std::string, float>::const_iterator it = btc.begin(); it != btc.end(); ++it)
+            std::cout << "date-" << it->first << ",\t" << "value-" << it->second << std::endl;
+    else
+        for (std::multimap<std::string, float>::const_iterator it = csv.begin(); it != csv.end(); ++it)
+            std::cout << "date-" << it->first << ",\t" << "value-" << it->second << std::endl;
+}
+
+void BitcoinExchange::setBtc(std::string date, float number, char type)
+{
+    type == '|'? btc.insert(std::make_pair(date, number)) : csv.insert(std::make_pair(date, number));
+}
+
+void BitcoinExchange::parse(const char *av, char delimiter){
+    std::ifstream input(av);
+    if (!input)
+        return (std::cerr << "Error opening input file: " << av << std::endl, exit (1));
+
+    std::string line;
+    std::string date;
+    float       number;
+    
+    while (std::getline(input, line)) {
+        std::stringstream ss(line);
+        std::string date, numberStr;
+
+        if (!std::getline(ss, date, delimiter) || !std::getline(ss, numberStr, delimiter)){
+            setBtc("Error: bad input => " + line, -1, delimiter);
+            continue;
+        }
+        number = saveNumber(numberStr);
+        date = saveDate(date);
+        setBtc(date, number, delimiter);
+    }
+}
+
+float BitcoinExchange::transform(std::multimap<std::string, float>::iterator itBtc) {
+    std::multimap<std::string, float>::iterator itCsv = csv.begin();
+    float value = 0 ;
+    for (; itBtc != btc.end() ; itBtc++){
+        for (; itCsv != csv.end() ; itCsv++){
+            if (itBtc->first == itCsv->first)
+                break ;
+        }
+        if (itCsv != csv.end())
+            if (itBtc->second < 2147483648 && itBtc->second >= -2147483648)
+                value = itBtc->second * itCsv->second;
+    }
+    return (value);
+}
+
+void BitcoinExchange::print() {
+    std::multimap<std::string, float>::iterator itBtc = btc.begin();
+    for (; itBtc != btc.end() ; itBtc++){
+        if (itBtc->second > 2147483648 || itBtc->second < -2147483648)
+            std::cerr << "Error: too large a number." << std::endl;
+        else if (itBtc->second < 0)
+            std::cerr << "Error: not a positive number." << std::endl;
+        else if (itBtc->first.find("Error: bad input => "))
+            std::cerr << itBtc->first << std::endl;
+        else
+        {
+            std::cout << itBtc->first << " => " << itBtc->second << " = " 
+            << transform(itBtc) << '.' << std::endl;
+        }
+    }
 }
