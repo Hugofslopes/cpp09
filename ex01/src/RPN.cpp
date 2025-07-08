@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 22:56:51 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/08 10:25:20 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,15 @@ RPN& RPN::operator=(const RPN &other){
 	return (*this);
 }
 
-void RPN::parseInput(std::string Ndate){
+void RPN::parseInput(std::string nDate){
 	char*   end;
 	int 	nb;
-	nb = std::strtod(Ndate.c_str(), &end);
+	nb = std::strtod(nDate.c_str(), &end);
 	if (nb > std::numeric_limits<int>::max() ||
     nb < std::numeric_limits<int>::min())
         std::cerr << "Error: too large a number." << std::endl, exit (1);
 	else
-		rpn.push(Ndate);
+		rpn.push(nDate);
 }
 
 std::string intToString(int value) {
