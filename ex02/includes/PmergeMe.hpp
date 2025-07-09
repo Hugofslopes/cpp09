@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:58:24 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/08 14:03:33 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/09 16:05:11 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <algorithm>
 # include <ctime>
 # include <utility>
+#include <iomanip>
 
 class PergeMe{
     public: 
@@ -38,7 +39,6 @@ class PergeMe{
         bool        checkLimits(int );
         void        sortLt();
         void        sortVec();
-        bool        checkPairsOrder();
         std::vector<int> tmp;
         std::list<int> lt;
         std::vector<int> vec;

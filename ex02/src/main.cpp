@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:19 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/08 12:16:09 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/09 16:03:28 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int main(int ac, char **av){
     for (size_t i = 1; av[i]; i++)
         perge.parseInput(av[i]);
     
-    //perge.execute('l');
+    perge.execute('l');
     perge.execute('v');
-    //perge.print();
+    perge.print();
 }
