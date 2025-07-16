@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/16 11:37:19 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/16 11:44:15 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,6 +220,7 @@ void PergeMe::sortLt() {
     splitPairsLt(lt, largerVals, smallerVals);
     recursiveSortLt(largerVals);          
     insertSmallerJacobList(largerVals, smallerVals);
+    lt = largerVals;
 }
 
                                         //SORT VECTOR
@@ -252,7 +253,7 @@ void recursiveSort(std::vector<int>& vals) {
     for (size_t i = 0; i < mid; ++i)
         left.push_back(vals[i]);  // Copy first half into left
     
-        for (size_t i = mid; i < vals.size(); ++i)
+    for (size_t i = mid; i < vals.size(); ++i)
         right.push_back(vals[i]);  // Copy second half into right
 
     recursiveSort(left);  
@@ -325,12 +326,13 @@ void insertSmallerJacobsthal(std::vector<int>& sortedList, const std::vector<int
 }
 
 void PergeMe::sortVec() {
-    std::vector<int> largerVals;    // To hold the larger elements from pairs
-    std::vector<int> smallerVals;   // To hold the smaller elements from pairs
+    std::vector<int> largerVals; 
+    std::vector<int> smallerVals;
 
-    splitPairs(vec, largerVals, smallerVals);  // Divide input into smaller and larger parts
-    recursiveSort(largerVals);                 // Sort the larger values
-    insertSmallerJacobsthal(largerVals, smallerVals);  // Insert the smaller values using Jacobsthal ordering
+    splitPairs(vec, largerVals, smallerVals);  
+    recursiveSort(largerVals);  
+    insertSmallerJacobsthal(largerVals, smallerVals);
+    vec = largerVals;
 }
 
 

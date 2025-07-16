@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:58:24 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 21:49:11 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/16 11:46:13 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,14 @@ class BitcoinExchange{
     public:
         BitcoinExchange();
         ~BitcoinExchange();
+        
         void                printMap() const;
         void                parse(const char *av, char);
 
     private:
         BitcoinExchange(const BitcoinExchange &);
         BitcoinExchange&    operator=(const BitcoinExchange &);
+
         int                 dateToInt(int year, int month, int day)const;
         std::string         strToDate(std::string)const;
         std::string         saveDate(std::string) const;
@@ -40,6 +42,7 @@ class BitcoinExchange{
         void                setBtc();
         double              transform();
         void                print();
+
         std::string                         date;
         double                              number;
         std::multimap<std::string,double>   csv;
