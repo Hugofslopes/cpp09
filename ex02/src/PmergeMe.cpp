@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/16 11:44:15 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/22 20:13:44 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,271 +70,190 @@ void PergeMe::parseInput(char *arg){
 }
 
                                         //SORT LIST
-void splitPairsLt(const std::list<int>& input, std::list<int>& largerVals,
-std::list<int>& smallerVals) {
-    std::list<int>::const_iterator it = input.begin();
-    int a, b;
+std::list<int> generateJacobsthalSequenceLt(int n) {
+    std::list<int> seq;
+    int k = 0;
 
-    while (it != input.end()) {
-        a = *it;
-        ++it;
+    while (true) {
+        int sign;
+        if (k % 2 == 0)
+            sign = 1;   // Even k → +1
+        else
+            sign = -1;  // Odd k → −1
 
-        if (it == input.end()) {
-            largerVals.push_back(a);
+        int power = (1 << (k + 1));  // 2^(k + 1) using bit shift
+        int j = (power + sign) / 3;
+
+        if (j > n)
             break;
-        }
 
-        b = *it;
-        ++it;
-
-        if (a > b) 
-            std::swap(a, b);
-        smallerVals.push_back(a);
-        largerVals.push_back(b);
+        seq.push_back(j - 1); // Convert to 0-based index
+        k++;
     }
+    return seq;
 }
 
-void recursiveSortLt(std::list<int>& vals) {
-    if (vals.size() <= 1)
+void binaryInsertLt(std::list<int>& sorted, int value) {
+    std::list<int>::iterator low = sorted.begin();
+    std::list<int>::iterator high = sorted.end();
+    int size = std::distance(low, high);
+
+    while (size > 0) {
+        std::list<int>::iterator mid = low;
+        std::advance(mid, size / 2);
+        if (*mid < value) {
+            low = mid;
+            ++low;
+            size -= size / 2 + 1;
+        } else {
+            size /= 2;
+        }
+    }
+    sorted.insert(low, value);
+}
+
+void fordJohnsonSortLt(std::list<int>& arr) {
+    if (arr.size() <= 1)
         return;
 
-    size_t mid = vals.size() / 2;  // Find midpoint
-    std::list<int> left, right;
-    std::list<int>::iterator it = vals.begin();
-    
-    for (size_t i = 0; i < mid; ++i, ++it)
-        left.push_back(*it); // Copy first half into left
+    std::list<int> larger;
+    std::list<int> smaller;
 
-    for (; it != vals.end(); ++it)
-        right.push_back(*it);  // Copy second half into right
+    std::list<int>::iterator it = arr.begin();
+    while (std::distance(it, arr.end()) >= 2) {
+        int a = *it;
+        ++it;
+        int b = *it;
+        ++it;
 
-    recursiveSortLt(left);  // Recursively sort left half
-    recursiveSortLt(right); // Recursively sort right half
+        if (a > b)
+            std::swap(a, b);
+        smaller.push_back(a);
+        larger.push_back(b);
+    }
 
-    vals.clear();  // Prepare to rebuild sorted list
+    bool hasLeftover = (it != arr.end());
+    int leftover = hasLeftover ? *it : 0;
 
-    std::list<int>::iterator lit = left.begin();
-    std::list<int>::iterator rit = right.begin();
+    fordJohnsonSortLt(larger);
 
-    // Merge sorted halves
-    while (lit != left.end() && rit != right.end()) {
-        if (*lit < *rit) {
-            vals.push_back(*lit);
-            ++lit;
+    std::list<int> result = larger;
+
+    std::list<int> smallList;
+    for (std::list<int>::iterator sit = smaller.begin(); sit != smaller.end(); ++sit)
+        smallList.push_back(*sit);
+
+    std::list<char> inserted(smallList.size(), 0);
+    std::list<int> jacOrder = generateJacobsthalSequenceLt(smallList.size());
+
+    std::list<int>::iterator smallIt;
+    std::list<char>::iterator insIt;
+
+    for (std::list<int>::iterator iIt = jacOrder.begin(); iIt != jacOrder.end(); ++iIt) {
+        int index = *iIt;
+        smallIt = smallList.begin();
+        insIt = inserted.begin();
+        std::advance(smallIt, index);
+        std::advance(insIt, index);
+
+        binaryInsertLt(result, *smallIt);
+        *insIt = 1;
+    }
+
+    smallIt = smallList.begin();
+    insIt = inserted.begin();
+    while (smallIt != smallList.end()) {
+        if (!*insIt)
+            binaryInsertLt(result, *smallIt);
+        ++smallIt;
+        ++insIt;
+    }
+
+    if (hasLeftover)
+        binaryInsertLt(result, leftover);
+
+    arr = result;
+}
+
+                                        //SORT VEC
+std::vector<int> generateJacobsthalSequence(int n) {
+    std::vector<int> seq;
+    int k = 0;
+
+    while (true) {
+        int sign;
+        if (k % 2 == 0)
+            sign = 1;
+        else
+            sign = -1;
+
+        int j = ((1 << (k + 1)) + sign) / 3;
+
+        if (j > n)
+            break;
+
+        seq.push_back(j - 1);
+        k++;
+    }
+    return seq;
+}
+
+
+void binaryInsert(std::vector<int>& sorted, int value) {
+    std::vector<int>::iterator first = sorted.begin();
+    std::vector<int>::iterator last = sorted.end();
+
+    while (first < last) {
+        std::vector<int>::iterator mid = first + (last - first) / 2;
+        if (*mid < value)
+            first = mid + 1;
+        else
+            last = mid;
+    }
+    sorted.insert(first, value);
+}
+
+void fordJohnsonSort(std::vector<int>& arr) {
+    if (arr.size() <= 1) 
+        return;
+
+    std::vector<int> larger, smaller;
+
+    for (size_t i = 0; i + 1 < arr.size(); i += 2) {
+        if (arr[i] < arr[i + 1]) {
+            smaller.push_back(arr[i]);
+            larger.push_back(arr[i + 1]);
         } 
         else {
-            vals.push_back(*rit);
-            ++rit;
+            smaller.push_back(arr[i + 1]);
+            larger.push_back(arr[i]);
         }
     }
 
-    while (lit != left.end()) {
-        vals.push_back(*lit);
-        ++lit;
-    }
-    while (rit != right.end()) {
-        vals.push_back(*rit);
-        ++rit;
-    }
-}
+    fordJohnsonSort(larger);
 
-//Fibonacci: F(n)= F(n−1) + F(n−2)F(n) = F(n−1) + F(n−2)
+    std::vector<int> result = larger;
 
-//Jacobsthal: J(n) = J(n−1) + 2⋅J(n−2)J(n) = J(n−1) + 2⋅J(n−2)
+    std::vector<int> insertionOrder = generateJacobsthalSequence(smaller.size());
+    std::vector<bool> inserted(smaller.size(), false);
 
-std::list<size_t> generateJacobsthalList(size_t n) {
-    std::list<size_t> jacob;
-    size_t prev, prev2;
-    std::list<size_t>::reverse_iterator rit;
-
-    if (n == 0)
-        return jacob;
-
-    jacob.push_back(1); 
-    jacob.push_back(3);
-
-    rit = jacob.rbegin();
-
-    while (*rit < n) {
-        prev = *rit;  // Last element
-        ++rit;               // Move to second-to-last
-        prev2 = *rit; // Second-to-last element
-        jacob.push_back(prev + 2 * prev2);  // J(n) = J(n-1) + 2*J(n-2)
-        rit = jacob.rbegin();  // Reset to new last element for next loop
-    }
-
-    return jacob;  // Return full Jacobsthal list
-}
-
-void insertSmallerJacobList(std::list<int>& sortedList, const std::list<int>& toInsert) {
-    std::list<size_t> jacob = generateJacobsthalList(toInsert.size());  // Jacobsthal indices
-
-    size_t total = toInsert.size();
-
-    std::list<bool> inserted;  // Track which elements were inserted
-    for (size_t i = 0; i < total; ++i)
-        inserted.push_back(false);  // Initialize to false
-
-    // Step 1: Insert elements at Jacobsthal positions
-    for (std::list<size_t>::iterator jIt = jacob.begin(); jIt != jacob.end(); ++jIt) {
-        size_t target = *jIt;
-        if (target >= total) 
-            break; 
-
-        std::list<int>::const_iterator targetIt = toInsert.begin();
-        for (size_t step = 0; step < target; ++step)
-            ++targetIt;  // Move to the target index
-
-        int val = *targetIt;  // Get value to insert
-        std::list<int>::iterator pos = sortedList.begin();
-        while (pos != sortedList.end() && *pos < val)
-            ++pos;  // Find correct insertion point (sorted order)
-        sortedList.insert(pos, val);  // Insert into sorted list
-
-        // Mark as inserted
-        std::list<bool>::iterator mark = inserted.begin();
-        std::advance(mark, target);
-        *mark = true;
-    }
-
-    // Step 2: Insert remaining elements that were not handled by Jacobsthal indices
-    std::list<bool>::const_iterator markIt = inserted.begin();
-    std::list<int>::const_iterator valIt = toInsert.begin();
-    while (markIt != inserted.end() && valIt != toInsert.end()) {
-        if (!*markIt) {
-            int val = *valIt;  // Get the value to insert
-            std::list<int>::iterator pos = sortedList.begin();
-            while (pos != sortedList.end() && *pos < val)
-                ++pos;  // Find insertion position
-            sortedList.insert(pos, val);  // Insert value
-        }
-        ++markIt;
-        ++valIt;
-    }
-}
-
-void PergeMe::sortLt() {
-    std::list<int> largerVals;
-    std::list<int> smallerVals;
-
-    splitPairsLt(lt, largerVals, smallerVals);
-    recursiveSortLt(largerVals);          
-    insertSmallerJacobList(largerVals, smallerVals);
-    lt = largerVals;
-}
-
-                                        //SORT VECTOR
-void splitPairs(const std::vector<int>& input, std::vector<int>& largerVals,
-std::vector<int>& smallerVals) {
-    int a, b;
-
-    for (size_t i = 0; i < input.size(); i += 2) {
-        a = input[i];
-
-        if (i + 1 == input.size())
-            largerVals.push_back(a); 
-        else {
-            b = input[i + 1];
-            if (a > b) 
-                std::swap(a, b);
-            smallerVals.push_back(a);
-            largerVals.push_back(b);
-        }
-    }
-}
-
-void recursiveSort(std::vector<int>& vals) {
-    if (vals.size() <= 1)
-        return; 
-
-    size_t mid = vals.size() / 2;  // Find midpoint for splitting
-    std::vector<int> left, right;
-
-    for (size_t i = 0; i < mid; ++i)
-        left.push_back(vals[i]);  // Copy first half into left
-    
-    for (size_t i = mid; i < vals.size(); ++i)
-        right.push_back(vals[i]);  // Copy second half into right
-
-    recursiveSort(left);  
-    recursiveSort(right); 
-    
-    vals.clear();  // Clear original vector to rebuild it
-
-    std::vector<int>::iterator lit = left.begin();
-    std::vector<int>::iterator rit = right.begin();
-
-    while (lit != left.end() && rit != right.end()) {
-        if (*lit < *rit) {
-            vals.push_back(*lit);
-            ++lit;
-        } 
-        else {
-            vals.push_back(*rit);
-            ++rit;
+    for (std::vector<int>::iterator it = insertionOrder.begin(); it != insertionOrder.end(); ++it) {
+        int index = *it;
+        if (index < static_cast<int>(smaller.size())) {
+            binaryInsert(result, smaller[index]);
+            inserted[index] = true;
         }
     }
 
-    while (lit != left.end()) {
-        vals.push_back(*lit);
-        ++lit;
-    }
-    while (rit != right.end()) {
-        vals.push_back(*rit);
-        ++rit;
-    }
+    for (size_t i = 0; i < smaller.size(); ++i)
+        if (!inserted[i])
+            binaryInsert(result, smaller[i]);
+
+    if (arr.size() % 2 == 1) 
+        binaryInsert(result, arr.back());
+
+    arr = result;
 }
-
-std::vector<size_t> generateJacobsthal(size_t n) {
-    std::vector<size_t> jacob;
-    jacob.push_back(1);  // First Jacobsthal number
-    jacob.push_back(3);  // Second Jacobsthal number
-
-    while (jacob.back() < n) 
-        jacob.push_back(jacob[jacob.size() - 1] + 2 * jacob[jacob.size() - 2]);  
-
-    return jacob; 
-}
-
-void insertSmallerJacobsthal(std::vector<int>& sortedList, const std::vector<int>& toInsert) {
-    std::vector<size_t> jacob = generateJacobsthal(toInsert.size());
-
-    std::vector<bool> inserted(toInsert.size(), false);  // Track which elements are inserted
-
-    for (size_t j = 0; j < jacob.size(); ++j) {
-        size_t idx = jacob[j];
-        if (idx >= toInsert.size())
-            break; 
-
-        int val = toInsert[idx];  // Get value at Jacobsthal index
-        std::vector<int>::iterator it = sortedList.begin();
-        while (it != sortedList.end() && *it < val)
-            ++it;  // Find correct insertion point (sorted order)
-        sortedList.insert(it, val);  // Insert value
-        inserted[idx] = true;  // Mark as inserted
-    }
-
-    for (size_t i = 0; i < toInsert.size(); ++i) {
-        if (!inserted[i]) {  // If value was not inserted via Jacobsthal
-            int val = toInsert[i];
-            std::vector<int>::iterator it = sortedList.begin();
-            while (it != sortedList.end() && *it < val)
-                ++it;  // Find insertion point
-            sortedList.insert(it, val);  // Insert value
-        }
-    }
-}
-
-void PergeMe::sortVec() {
-    std::vector<int> largerVals; 
-    std::vector<int> smallerVals;
-
-    splitPairs(vec, largerVals, smallerVals);  
-    recursiveSort(largerVals);  
-    insertSmallerJacobsthal(largerVals, smallerVals);
-    vec = largerVals;
-}
-
 
 void PergeMe::execute(char type){
     std::clock_t start;
@@ -343,12 +262,12 @@ void PergeMe::execute(char type){
     if (type == 'l')
     {
         start = std::clock();
-        sortLt();
+        fordJohnsonSortLt(lt);
     }
     else if (type == 'v')
     {
         start = std::clock();
-        sortVec();
+        fordJohnsonSort(vec);
     }
     end = std::clock();
     if (type == 'l')

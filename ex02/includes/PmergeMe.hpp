@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:58:24 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/16 11:43:13 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/22 19:39:19 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ class PergeMe{
         
         bool        checkDuplicates(int);
         bool        checkLimits(int );
-        void        sortLt();
-        void        sortVec();
 
         std::vector<int>    tmp;
         std::list<int>      lt;
