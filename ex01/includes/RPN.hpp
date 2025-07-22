@@ -6,10 +6,9 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:58:24 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/16 11:45:19 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/22 18:58:55 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #ifndef RPN_CPP
 # define RPN_CPP
@@ -26,7 +25,7 @@ class RPN{
 		RPN();
 		~RPN();
 		
-		void applyRPN(char*);
+		void applyRPN(const std::string& input);
 		void print();
 	
 	private:
@@ -34,9 +33,8 @@ class RPN{
 		RPN& operator=(const RPN &);
 
 		void parseInput(std::string);
-		void calculate(char op);
-
-		std::stack<std::string> rpn;
+		void calculate(std::string);
+		std::stack<int> rpn;
 } ;
 
 # endif
