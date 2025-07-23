@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/23 15:16:20 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/23 15:23:14 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,8 @@ std::vector<int> generateJacobsthalSequence(int n) {
         int sign = (k % 2 == 0) ? 1 : -1;
         int j = ((1 << (k + 1)) + sign) / 3;
 
-        if (j > n) break;
+        if (j > n) 
+            break;
 
         int index = j - 1;
 
