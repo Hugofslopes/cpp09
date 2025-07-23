@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/23 15:14:36 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/23 15:16:20 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ std::list<int> generateJacobsthalSequenceLt(int n) {
 
         ++k;
     }
-
     return seq;
 }
 
@@ -120,7 +119,8 @@ void binaryInsertLt(std::list<int>& sorted, int value) {
             low = mid;
             ++low;
             size -= size / 2 + 1;
-        } else {
+        } 
+        else {
             size /= 2;
         }
     }
@@ -213,10 +213,9 @@ std::vector<int> generateJacobsthalSequence(int n) {
 
         if (!alreadyPresent)
             seq.push_back(index);
-
+            
         ++k;
     }
-
     return seq;
 }
 
@@ -231,7 +230,6 @@ void binaryInsert(std::vector<int>& sorted, int value) {
         else
             last = mid;
     }
-
     sorted.insert(first, value);
 }
 
