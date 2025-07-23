@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/23 15:23:14 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/23 15:44:07 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,36 +72,22 @@ void PergeMe::parseInput(char *arg){
                                         //SORT LIST
 std::list<int> generateJacobsthalSequenceLt(int n) {
     std::list<int> seq;
-    int k = 0;
 
+    if (n >= 1) 
+        seq.push_back(0);
+    if (n >= 3) 
+        seq.push_back(2);
+
+    int k = 3;
     while (true) {
-        int sign;
-        if (k % 2 == 0)
-            sign = 1;
-        else
-            sign = -1;
-
+        int sign = (k % 2 == 0) ? 1 : -1;
         int power = (1 << (k + 1));
         int j = (power + sign) / 3;
 
-        if (j > n)
+        if (j >= n)
             break;
 
-        int index = j - 1;
-
-        bool alreadyPresent = false;
-        std::list<int>::iterator it = seq.begin();
-        while (it != seq.end()) {
-            if (*it == index) {
-                alreadyPresent = true;
-                break;
-            }
-            ++it;
-        }
-
-        if (!alreadyPresent)
-            seq.push_back(index);
-
+        seq.push_back(j - 1);
         ++k;
     }
     return seq;
@@ -193,28 +179,21 @@ void fordJohnsonSortLt(std::list<int>& arr) {
                                         //SORT VEC
 std::vector<int> generateJacobsthalSequence(int n) {
     std::vector<int> seq;
-    int k = 0;
 
+    if (n >= 1) 
+        seq.push_back(0);
+    if (n >= 3) 
+        seq.push_back(2);
+
+    int k = 3;
     while (true) {
         int sign = (k % 2 == 0) ? 1 : -1;
         int j = ((1 << (k + 1)) + sign) / 3;
 
-        if (j > n) 
+        if (j >= n)
             break;
 
-        int index = j - 1;
-
-        bool alreadyPresent = false;
-        for (std::vector<int>::iterator it = seq.begin(); it != seq.end(); ++it) {
-            if (*it == index) {
-                alreadyPresent = true;
-                break;
-            }
-        }
-
-        if (!alreadyPresent)
-            seq.push_back(index);
-            
+        seq.push_back(j - 1);
         ++k;
     }
     return seq;
@@ -234,7 +213,6 @@ void binaryInsert(std::vector<int>& sorted, int value) {
     sorted.insert(first, value);
 }
 
-
 void fordJohnsonSort(std::vector<int>& arr) {
     if (arr.size() <= 1) return;
 
@@ -252,8 +230,8 @@ void fordJohnsonSort(std::vector<int>& arr) {
         }
     }
 
-    bool hasLeftover = (i < arr.size());
-    int leftover = hasLeftover ? arr[i] : 0;
+    bool hasLeftover = (arr.size() % 2 == 1);
+    int leftover = hasLeftover ? arr.back() : 0;
 
     fordJohnsonSort(larger);
     std::vector<int> result = larger;
