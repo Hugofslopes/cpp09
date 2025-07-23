@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/22 20:13:44 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/23 15:12:41 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,19 +77,34 @@ std::list<int> generateJacobsthalSequenceLt(int n) {
     while (true) {
         int sign;
         if (k % 2 == 0)
-            sign = 1;   // Even k → +1
+            sign = 1;
         else
-            sign = -1;  // Odd k → −1
+            sign = -1;
 
-        int power = (1 << (k + 1));  // 2^(k + 1) using bit shift
+        int power = (1 << (k + 1));
         int j = (power + sign) / 3;
 
         if (j > n)
             break;
 
-        seq.push_back(j - 1); // Convert to 0-based index
-        k++;
+        int index = j - 1;
+
+        bool alreadyPresent = false;
+        std::list<int>::iterator it = seq.begin();
+        while (it != seq.end()) {
+            if (*it == index) {
+                alreadyPresent = true;
+                break;
+            }
+            ++it;
+        }
+
+        if (!alreadyPresent)
+            seq.push_back(index);
+
+        ++k;
     }
+
     return seq;
 }
 
@@ -181,23 +196,29 @@ std::vector<int> generateJacobsthalSequence(int n) {
     int k = 0;
 
     while (true) {
-        int sign;
-        if (k % 2 == 0)
-            sign = 1;
-        else
-            sign = -1;
-
+        int sign = (k % 2 == 0) ? 1 : -1;
         int j = ((1 << (k + 1)) + sign) / 3;
 
-        if (j > n)
-            break;
+        if (j > n) break;
 
-        seq.push_back(j - 1);
-        k++;
+        int index = j - 1;
+
+        bool alreadyPresent = false;
+        for (std::vector<int>::iterator it = seq.begin(); it != seq.end(); ++it) {
+            if (*it == index) {
+                alreadyPresent = true;
+                break;
+            }
+        }
+
+        if (!alreadyPresent)
+            seq.push_back(index);
+
+        ++k;
     }
+
     return seq;
 }
-
 
 void binaryInsert(std::vector<int>& sorted, int value) {
     std::vector<int>::iterator first = sorted.begin();
@@ -210,16 +231,18 @@ void binaryInsert(std::vector<int>& sorted, int value) {
         else
             last = mid;
     }
+
     sorted.insert(first, value);
 }
 
+
 void fordJohnsonSort(std::vector<int>& arr) {
-    if (arr.size() <= 1) 
-        return;
+    if (arr.size() <= 1) return;
 
-    std::vector<int> larger, smaller;
+    std::vector<int> smaller, larger;
+    size_t i = 0;
 
-    for (size_t i = 0; i + 1 < arr.size(); i += 2) {
+    for (; i + 1 < arr.size(); i += 2) {
         if (arr[i] < arr[i + 1]) {
             smaller.push_back(arr[i]);
             larger.push_back(arr[i + 1]);
@@ -230,14 +253,16 @@ void fordJohnsonSort(std::vector<int>& arr) {
         }
     }
 
-    fordJohnsonSort(larger);
+    bool hasLeftover = (i < arr.size());
+    int leftover = hasLeftover ? arr[i] : 0;
 
+    fordJohnsonSort(larger);
     std::vector<int> result = larger;
 
-    std::vector<int> insertionOrder = generateJacobsthalSequence(smaller.size());
     std::vector<bool> inserted(smaller.size(), false);
+    std::vector<int> jacOrder = generateJacobsthalSequence(smaller.size());
 
-    for (std::vector<int>::iterator it = insertionOrder.begin(); it != insertionOrder.end(); ++it) {
+    for (std::vector<int>::iterator it = jacOrder.begin(); it != jacOrder.end(); ++it) {
         int index = *it;
         if (index < static_cast<int>(smaller.size())) {
             binaryInsert(result, smaller[index]);
@@ -245,12 +270,12 @@ void fordJohnsonSort(std::vector<int>& arr) {
         }
     }
 
-    for (size_t i = 0; i < smaller.size(); ++i)
-        if (!inserted[i])
-            binaryInsert(result, smaller[i]);
+    for (size_t j = 0; j < smaller.size(); ++j)
+        if (!inserted[j])
+            binaryInsert(result, smaller[j]);
 
-    if (arr.size() % 2 == 1) 
-        binaryInsert(result, arr.back());
+    if (hasLeftover)
+        binaryInsert(result, leftover);
 
     arr = result;
 }

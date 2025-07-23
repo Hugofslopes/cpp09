@@ -6,7 +6,7 @@
 /*   By: hfilipe- <hfilipe-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:56:38 by hfilipe-          #+#    #+#             */
-/*   Updated: 2025/07/07 22:56:58 by hfilipe-         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:23:52 by hfilipe-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ double BitcoinExchange::saveNumber(std::string number)const{
 }
 
 void BitcoinExchange::printMap() const{
-    for (std::multimap<std::string, double>::const_iterator it = csv.begin(); it != csv.end(); ++it)
+    for (std::map<std::string, double>::const_iterator it = csv.begin(); it != csv.end(); ++it)
         std::cout << "date-" << it->first << ",\t" << "value-" << it->second << std::endl;
 }
 
@@ -123,7 +123,7 @@ void BitcoinExchange::parse(const char *av, char delimiter){
 }
 
 double BitcoinExchange::transform() {
-    std::multimap<std::string, double>::iterator itCsv = csv.find(date);
+    std::map<std::string, double>::iterator itCsv = csv.find(date);
     double value = 0;
     char* end;
     std::string str;
